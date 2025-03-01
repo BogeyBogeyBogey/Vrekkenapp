@@ -221,6 +221,13 @@
             text-align: center;
         }
 
+        .error-message {
+            color: #ef4444;
+            font-size: 1rem;
+            text-align: center;
+            margin-top: 20px;
+        }
+
         @media (max-width: 480px) {
             header img {
                 max-width: 150px;
@@ -267,7 +274,7 @@
 </head>
 <body>
     <header>
-        <img src="logo.jpeg" alt="Vrolijke Vrekken Logo">
+        <img src="logo.jpeg" alt="Vrolijke Vrekken Logo" onerror="this.style.display='none';">
     </header>
     <div class="container">
         <div class="card" id="income-section">
@@ -332,7 +339,10 @@
             <button onclick="addMonth()">Voeg Maand Toe</button>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <div class="error-message" id="error-message" style="display: none;">
+        Er is een probleem met het laden van de app. Controleer of 'index.html' en 'logo.jpeg' correct zijn geüpload naar de hoofdmap van de repository.
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script>
         let incomeCategories = [
             "Loon",
@@ -655,6 +665,12 @@
             updateTimeline();
             updateBudget();
         });
+
+        // Controleer of Chart.js correct is geladen
+        if (typeof Chart === "undefined") {
+            console.error("Chart.js kon niet worden geladen. Controleer de CDN-link of voeg Chart.js lokaal toe.");
+            document.getElementById("error-message").style.display = "block";
+        }
     </script>
 </body>
 </html>
