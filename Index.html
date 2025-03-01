@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vrolijke Vrekken - Financiële Planning</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f0f4f8, #e0e7ff);
+            color: #2d3748;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background: transparent;
+            margin-bottom: 20px;
+        }
+
+        header img {
+            max-width: 250px;
+            height: auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1e3a8a;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #4a5568;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            padding-left: 30px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: #3b82f6;
+            outline: none;
+        }
+
+        .input-group input[readonly] {
+            background: #f7fafc;
+            color: #718096;
+        }
+
+        .input-group.income::before {
+            content: '+';
+            position: absolute;
+            left: 10px;
+            top: 38px;
+            color: #10b981;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .input-group.expense::before {
+            content: '−';
+            position: absolute;
+            left: 10px;
+            top: 38px;
+            color: #ef4444;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        button {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        button.small-btn {
+            padding: 10px;
+            font-size: 0.9rem;
+            width: auto;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        button.copy-btn {
+            background: #10b981;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .total-amount {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        #grafiek-container {
+            width: 100%;
+            height: 300px; /* Vaste hoogte om uitrekking te voorkomen */
+            margin-top: 20px;
+            position: relative;
+        }
+
+        #investment-graph {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .result {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-top: 15px;
+        }
+
+        .result .profit {
+            color: #10b981;
+        }
+
+        .timeline-table {
+            overflow-x: auto;
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .timeline-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .timeline-table th, .timeline-table td {
+            padding: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .timeline-table th {
+            background: #1e3a8a;
+            color: white;
+            font-weight: 600;
+        }
+
+        .timeline-table th.even {
+            background: #2ecc71;
+        }
+
+        .timeline-table th.odd {
+            background: #f39c12;
+        }
+
+        .timeline-table td.even {
+            background: #e6ffe6;
+        }
+
+        .timeline-table td.odd {
+            background: #ffe6cc;
+        }
+
+        .timeline-table td input {
+            width: 80px;
+            padding: 5px;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 1rem;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 480px) {
+            header img {
+                max-width: 150px;
+            }
+
+            .card h2 {
+                font-size: 1.3rem;
+            }
+
+            .input-group input, .input-group select {
+                font-size: 0.9rem;
+            }
+
+            button {
+                font-size: 0.9rem;
+            }
+
+            button.small-btn {
+                font-size: 0.8rem;
+                padding: 8px;
+            }
+
+            .total-amount {
+                font-size: 0.9rem;
+            }
+
+            .timeline-table th, .timeline-table td {
+                font-size: 0.8rem;
+            }
+
+            .timeline-table td input {
+                width: 60px;
+            }
+
+            .input-group.income::before, .input-group.expense::before {
+                top: 35px;
+            }
+
+            #grafiek-container {
+                height: 250px; /* Kleinere hoogte voor mobiel */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="logo.jpeg" alt="Vrolijke Vrekken Logo" onerror="this.style.display='none';">
+    </header>
+    <div class="container">
+        <div class="card" id="income-section">
+            <h2>Inkomsten</h2>
+            <div id="income-inputs">
+                <!-- Dynamische inkomsten inputs worden hier toegevoegd -->
+            </div>
+            <div class="total-amount" id="total-income">Totaalbedrag Inkomsten: € 0,00</div>
+            <button class="small-btn" onclick="addIncomeCategory()">Voeg Extra Inkomst Toe</button>
+        </div>
+        <div class="card" id="expenses-section">
+            <h2>Uitgaven</h2>
+            <div id="expense-inputs">
+                <!-- Dynamische uitgaven inputs worden hier toegevoegd -->
+            </div>
+            <div class="total-amount" id="total-expenses">Totaalbedrag Uitgaven: € 0,00</div>
+            <button class="small-btn" onclick="addExpenseCategory()">Voeg Extra Uitgave Toe</button>
+        </div>
+        <div class="card" id="investment-simulation">
+            <h2>Beleggingssimulatie</h2>
+            <div class="input-group">
+                <label>Maandelijks Bedrag (€)</label>
+                <input type="number" id="monthly-amount" readonly>
+            </div>
+            <div class="input-group">
+                <label>Startbedrag (€)</label>
+                <input type="number" id="start-amount" placeholder="0" oninput="updateSimulation()">
+            </div>
+            <div class="input-group">
+                <label>Looptijd (jaren)</label>
+                <select id="duration" onchange="updateSimulation()">
+                    <!-- Opties worden dynamisch toegevoegd -->
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Rendement (%)</label>
+                <input type="number" id="return-rate" step="0.1" value="7" oninput="updateSimulation()">
+            </div>
+            <div class="result">
+                <span id="total-result">Resultaat: € 0,00</span>
+                <span id="profit" class="profit">Winst: € 0,00</span>
+            </div>
+            <div id="grafiek-container">
+                <canvas id="investment-graph"></canvas>
+            </div>
+        </div>
+        <div class="card" id="financial-timeline">
+            <h2>Financiële Tijdlijn</h2>
+            <div class="timeline-table">
+                <table id="timeline-table">
+                    <thead>
+                        <tr>
+                            <th>Categorie</th>
+                            <!-- Maanden worden hier toegevoegd -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Rijen worden dynamisch toegevoegd -->
+                    </tbody>
+                </table>
+            </div>
+            <button onclick="addMonth()">Voeg Maand Toe</button>
+        </div>
+    </div>
+    <div class="error-message" id="error-message" style="display: none;">
+        Er is een probleem met het laden van de app. Controleer of 'index.html' en 'logo.jpeg' correct zijn geüpload naar de hoofdmap van de repository.
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script>
+        let incomeCategories = [
+            "Loon",
+            "Maaltijdcheques",
+            "Kindergeld",
+            "Vakantiegeld (Totaal gedeeld door 12)",
+            "Eindejaarspremie (Totaal gedeeld door 12)",
+            "Alimentatie",
+            "Huurinkomsten"
+        ];
+        let expenseCategories = [
+            "Huur/Hypotheek",
+            "Boodschappen",
+            "Elektriciteit",
+            "Water",
+            "Verwarming",
+            "Telecom",
+            "Vervoer",
+            "Leningen",
+            "Streaming",
+            "Kleren",
+            "Horeca",
+            "Hobby's",
+            "Huisdieren",
+            "Belastingen",
+            "Verzekeringen"
+        ];
+        let timelineMonths = [{ label: "Feb 2025", start: new Date(2025, 1, 15), data: {} }];
+        let chart;
+
+        // Vul de looptijd dropdown
+        const durationSelect = document.getElementById("duration");
+        for (let i = 1; i <= 50; i++) {
+            const option = document.createElement("option");
+            option.value = i;
+            option.text = `${i} jaar`;
+            if (i === 20) option.selected = true;
+            durationSelect.appendChild(option);
+        }
+
+        // Formateer bedragen (bijv. € 4.300,00)
+        function formatAmount(amount) {
+            let [integer, decimal] = amount.toFixed(2).split(".");
+            integer = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            return `€ ${integer},${decimal}`;
+        }
+
+        // Update budget en simulatie
+        function updateBudget() {
+            let totalIncome = 0;
+            document.querySelectorAll(".income-input").forEach(input => {
+                totalIncome += parseFloat(input.value) || 0;
+            });
+            document.getElementById("total-income").textContent = `Totaalbedrag Inkomsten: ${formatAmount(totalIncome)}`;
+
+            let totalExpenses = 0;
+            document.querySelectorAll(".expense-input").forEach(input => {
+                totalExpenses += parseFloat(input.value) || 0;
+            });
+            document.getElementById("total-expenses").textContent = `Totaalbedrag Uitgaven: ${formatAmount(totalExpenses)}`;
+
+            const monthlyAmount = totalIncome - totalExpenses;
+            document.getElementById("monthly-amount").value = monthlyAmount.toFixed(2);
+            updateSimulation();
+        }
+
+        // Update investeringssimulatie
+        function updateSimulation() {
+            const monthlyAmount = parseFloat(document.getElementById("monthly-amount").value) || 0;
+            const startAmount = parseFloat(document.getElementById("start-amount").value) || 0;
+            const duration = parseInt(document.getElementById("duration").value) || 0;
+            const returnRate = parseFloat(document.getElementById("return-rate").value) || 0;
+
+            if (isNaN(duration) || duration <= 0) {
+                // Als de looptijd ongeldig is, toon een lege grafiek
+                if (chart) chart.destroy();
+                const ctx = document.getElementById("investment-graph").getContext("2d");
+                chart = new Chart(ctx, {
+                    type: "line",
+                    data: {
+                        labels: [],
+                        datasets: []
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: "Bedrag (€)" },
+                                ticks: { callback: function(value) { return formatAmount(value); } }
+                            },
+                            x: { title: { display: true, text: "Jaar" } }
+                        }
+                    }
+                });
+                document.getElementById("total-result").textContent = `Resultaat: ${formatAmount(0)}`;
+                document.getElementById("profit").textContent = `Winst: ${formatAmount(0)}`;
+                return;
+            }
+
+            const monthlyRate = returnRate / 100 / 12;
+            const months = duration * 12;
+            let futureValue = startAmount;
+            let totalInvested = startAmount;
+
+            const labels = [];
+            const investedData = [];
+            const totalData = [];
+
+            for (let month = 0; month <= months; month++) {
+                if (month % 12 === 0) {
+                    labels.push(2025 + month / 12);
+                    investedData.push(totalInvested);
+                    totalData.push(futureValue);
+                }
+                if (month < months) {
+                    futureValue = futureValue * (1 + monthlyRate) + monthlyAmount;
+                    totalInvested += monthlyAmount;
+                }
+            }
+
+            if (chart) chart.destroy();
+            const ctx = document.getElementById("investment-graph").getContext("2d");
+            chart = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "Geïnvesteerd",
+                            data: investedData,
+                            borderColor: "#10b981",
+                            backgroundColor: "rgba(16, 185, 129, 0.1)",
+                            fill: true,
+                            tension: 0.1
+                        },
+                        {
+                            label: "Totaal",
+                            data: totalData,
+                            borderColor: "#3b82f6",
+                            backgroundColor: "rgba(59, 130, 246, 0.1)",
+                            fill: true,
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: "Bedrag (€)" },
+                            ticks: { callback: function(value) { return formatAmount(value); } }
+                        },
+                        x: { title: { display: true, text: "Jaar" } }
+                    }
+                }
+            });
+
+            const totalResult = totalData[totalData.length - 1];
+            const profit = totalResult - totalInvested;
+            document.getElementById("total-result").textContent = `Resultaat: ${formatAmount(totalResult)}`;
+            document.getElementById("profit").textContent = `Winst: ${formatAmount(profit)}`;
+        }
+
+        // Update financiële tijdlijn
+        function updateTimeline() {
+            const table = document.getElementById("timeline-table");
+            const thead = table.querySelector("thead tr");
+            thead.innerHTML = "<th>Categorie</th>";
+            timelineMonths.forEach((month, idx) => {
+                const th = document.createElement("th");
+                th.textContent = month.label;
+                th.className = idx % 2 === 0 ? "even" : "odd";
+                if (idx > 0) {
+                    const copyBtn = document.createElement("button");
+                    copyBtn.className = "copy-btn";
+                    copyBtn.textContent = "Kopiëren";
+                    copyBtn.onclick = () => copyPreviousMonth(idx);
+                    th.appendChild(copyBtn);
+                }
+                thead.appendChild(th);
+            });
+
+            const tbody = table.querySelector("tbody");
+            tbody.innerHTML = "";
+            const allCategories = [...incomeCategories, ...expenseCategories];
+            allCategories.forEach(category => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td>${category}</td>`;
+                timelineMonths.forEach((month, idx) => {
+                    const td = document.createElement("td");
+                    td.className = idx % 2 === 0 ? "even" : "odd";
+                    const input = document.createElement("input");
+                    input.type = "number";
+                    input.value = month.data[category] || 0;
+                    input.addEventListener("input", (e) => {
+                        month.data[category] = parseFloat(e.target.value) || 0;
+                        if (idx === 0) updateBudget();
+                    });
+                    td.appendChild(input);
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Kopieer van de vorige maand
+        function copyPreviousMonth(index) {
+            if (index > 0) {
+                const previousMonth = timelineMonths[index - 1];
+                const currentMonth = timelineMonths[index];
+                [...incomeCategories, ...expenseCategories].forEach(category => {
+                    currentMonth.data[category] = previousMonth.data[category] || 0;
+                });
+                updateTimeline();
+            }
+        }
+
+        // Voeg een nieuwe maand toe
+        function addMonth() {
+            const lastMonth = timelineMonths[timelineMonths.length - 1];
+            const newMonthStart = new Date(lastMonth.start);
+            newMonthStart.setMonth(newMonthStart.getMonth() + 1);
+            const label = newMonthStart.toLocaleString("nl-NL", { month: "short", year: "numeric" });
+            timelineMonths.push({ label, start: newMonthStart, data: {} });
+            updateTimeline();
+        }
+
+        // Voeg nieuwe inkomenscategorie toe
+        function addIncomeCategory() {
+            // Sla de huidige waarden op
+            const incomeValues = {};
+            document.querySelectorAll(".income-input").forEach(input => {
+                const label = input.parentElement.querySelector("label").textContent.replace(" (€)", "");
+                incomeValues[label] = input.value;
+            });
+
+            // Voeg nieuwe categorie toe
+            const categoryName = prompt("Voer de naam van de nieuwe inkomenscategorie in:");
+            if (categoryName) {
+                incomeCategories.push(categoryName);
+                updateIncomeInputs();
+
+                // Herstel de waarden
+                document.querySelectorAll(".income-input").forEach(input => {
+                    const label = input.parentElement.querySelector("label").textContent.replace(" (€)", "");
+                    if (incomeValues[label]) {
+                        input.value = incomeValues[label];
+                    }
+                });
+
+                updateTimeline();
+            }
+        }
+
+        // Voeg nieuwe uitgavencategorie toe
+        function addExpenseCategory() {
+            // Sla de huidige waarden op
+            const expenseValues = {};
+            document.querySelectorAll(".expense-input").forEach(input => {
+                const label = input.parentElement.querySelector("label").textContent.replace(" (€)", "");
+                expenseValues[label] = input.value;
+            });
+
+            // Voeg nieuwe categorie toe
+            const categoryName = prompt("Voer de naam van de nieuwe uitgavencategorie in:");
+            if (categoryName) {
+                expenseCategories.push(categoryName);
+                updateExpenseInputs();
+
+                // Herstel de waarden
+                document.querySelectorAll(".expense-input").forEach(input => {
+                    const label = input.parentElement.querySelector("label").textContent.replace(" (€)", "");
+                    if (expenseValues[label]) {
+                        input.value = expenseValues[label];
+                    }
+                });
+
+                updateTimeline();
+            }
+        }
+
+        // Update inkomsten inputs
+        function updateIncomeInputs() {
+            const incomeInputs = document.getElementById("income-inputs");
+            incomeInputs.innerHTML = "";
+            incomeCategories.forEach(category => {
+                const div = document.createElement("div");
+                div.className = "input-group income";
+                div.innerHTML = `
+                    <label>${category} (€)</label>
+                    <input type="number" class="income-input" placeholder="0" oninput="updateBudget()">
+                `;
+                incomeInputs.appendChild(div);
+            });
+        }
+
+        // Update uitgaven inputs
+        function updateExpenseInputs() {
+            const expenseInputs = document.getElementById("expense-inputs");
+            expenseInputs.innerHTML = "";
+            expenseCategories.forEach(category => {
+                const div = document.createElement("div");
+                div.className = "input-group expense";
+                div.innerHTML = `
+                    <label>${category} (€)</label>
+                    <input type="number" class="expense-input" placeholder="0" oninput="updateBudget()">
+                `;
+                expenseInputs.appendChild(div);
+            });
+        }
+
+        // Initialisatie
+        document.addEventListener("DOMContentLoaded", () => {
+            updateIncomeInputs();
+            updateExpenseInputs();
+            updateTimeline();
+            updateBudget();
+        });
+
+        // Controleer of Chart.js correct is geladen
+        if (typeof Chart === "undefined") {
+            console.error("Chart.js kon niet worden geladen. Controleer de CDN-link of voeg Chart.js lokaal toe.");
+            document.getElementById("error-message").style.display = "block";
+        }
+    </script>
+</body>
+</html>
