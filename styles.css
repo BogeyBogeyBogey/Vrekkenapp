@@ -1,0 +1,262 @@
+/* Basisstijl */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #f0f4f8, #e0e7ff);
+  color: #2d3748;
+  line-height: 1.6;
+  padding: 20px;
+  position: relative;
+}
+header {
+  text-align: center;
+  padding: 20px;
+  background: transparent;
+  margin-bottom: 20px;
+}
+header img {
+  max-width: 250px;
+  height: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+}
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.card {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.card h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #1e3a8a;
+}
+.input-group {
+  margin-bottom: 15px;
+  position: relative;
+}
+.input-group label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #4a5568;
+}
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 12px;
+  padding-left: 30px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+.input-group input:focus,
+.input-group select:focus {
+  border-color: #3b82f6;
+  outline: none;
+}
+.input-group input[readonly] {
+  background: #f7fafc;
+  color: #718096;
+}
+.input-group.income::before {
+  content: '+';
+  position: absolute;
+  left: 10px;
+  top: 38px;
+  color: #10b981;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+.input-group.expense::before {
+  content: '−';
+  position: absolute;
+  left: 10px;
+  top: 38px;
+  color: #ef4444;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+button {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+button.small-btn {
+  padding: 10px;
+  font-size: 0.9rem;
+  width: auto;
+  display: inline-block;
+  margin-top: 10px;
+}
+.total-amount {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+#grafiek-container {
+  width: 100%;
+  height: 300px;
+  margin-top: 20px;
+  position: relative;
+}
+#investment-graph {
+  width: 100% !important;
+  height: 100% !important;
+}
+.result {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-top: 15px;
+}
+.result .profit {
+  color: #10b981;
+}
+.error-message {
+  color: #ef4444;
+  font-size: 1rem;
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Tutorial overlay & popup */
+.tutorial-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: none;
+}
+.tutorial-popup {
+  position: absolute;
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+  z-index: 1001;
+  display: none;
+}
+/* Extra witruimte zodat de tekst niet botst met de sluitknop */
+.tutorial-popup.extra-padding {
+  padding-top: 30px;
+}
+.tutorial-popup p {
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+.tutorial-popup .close-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #ef4444;
+}
+.tutorial-popup .next-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+/* Pijlen: als de pop-up onder het element komt, komt de pijl bovenaan de popup (wijst omhoog) */
+.tutorial-popup.below::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid white;
+}
+/* Als de pop-up boven het element komt, verschijnt de pijl onderaan (wijst omlaag) */
+.tutorial-popup.above::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid white;
+}
+/* Verwijder eventuele ongewenste lijnen in de pijl */
+.tutorial-popup.no-line.below::before,
+.tutorial-popup.no-line.above::after {
+  border-color: white;
+}
+.tutorial-icon {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1002;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #2563eb;
+  display: none;
+}
+
+@media (max-width: 480px) {
+  header img {
+    max-width: 150px;
+  }
+  .card h2 {
+    font-size: 1.3rem;
+  }
+  .input-group input,
+  .input-group select {
+    font-size: 0.9rem;
+  }
+  button {
+    font-size: 0.9rem;
+  }
+  button.small-btn {
+    font-size: 0.8rem;
+    padding: 8px;
+  }
+  .total-amount {
+    font-size: 0.9rem;
+  }
+  .input-group.income::before,
+  .input-group.expense::before {
+    top: 35px;
+  }
+  #grafiek-container {
+    height: 250px;
+  }
+}
