@@ -1,0 +1,37 @@
+/* index.css */
+.vrolijke-vrekken-app * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.vrolijke-vrekken-app {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #f0f4f8, #e0e7ff);
+  color: #2d3748;
+  line-height: 1.6;
+  padding: 20px;
+  position: relative;
+}
+
+.vrolijke-vrekken-app header {
+  text-align: center;
+  padding: 20px;
+  background: transparent;
+  margin-bottom: 20px;
+}
+
+.vrolijke-vrekken-app header img {
+  max-width: 250px;
+  height: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+}
+
+/* Plak hier de rest van je CSS uit je originele code, met .vrolijke-vrekken-app prefix */
+.vrolijke-vrekken-app .container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ... (alle andere stijlen) */
