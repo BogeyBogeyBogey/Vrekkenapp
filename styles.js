@@ -1,119 +1,299 @@
-// index.js
-const appHTML = `
-  <header>
-    <img src="./logo.jpg" alt="Vrolijke Vrekken Logo" onerror="this.style.display='none';">
-  </header>
-  <div class="tutorial-icon" id="tutorial-icon"></div>
-  <div class="tutorial-overlay" id="tutorial-overlay"></div>
-  <div class="tutorial-popup" id="tutorial-popup">
-    <span class="close-btn" onclick="closeTutorial()"></span>
-    <p id="tutorial-text"></p>
-    <button class="next-btn" id="next-btn" onclick="nextTutorialStep()">Volgende</button>
-  </div>
-  <div class="container">
-    <div class="card" id="income-section">
-      <h2>Gezinsinkomsten</h2>
-      <div id="income-inputs"></div>
-      <div class="total-amount" id="total-income">Totaal inkomsten: € 0,00</div>
-      <button class="small-btn" id="add-income-btn" onclick="addIncomeCategory()">Voeg extra inkomst toe</button>
-    </div>
-    <div class="card" id="expenses-section">
-      <h2>Gezinsuitgaven</h2>
-      <div id="expense-inputs"></div>
-      <div class="total-amount" id="total-expenses">Totaal uitgaven: € 0,00</div>
-      <button class="small-btn" onclick="addExpenseCategory()">Voeg extra uitgave toe</button>
-    </div>
-    <div class="card" id="balance-section">
-      <h2>Maandbalans</h2>
-      <div class="total-amount" id="balance-amount">Eindsaldo: € 0,00</div>
-    </div>
-    <div class="card" id="investment-simulation">
-      <h2>Beleggingssimulatie</h2>
-      <div class="input-group">
-        <label>Maandelijks bedrag (€)</label>
-        <input type="number" id="monthly-amount" readonly>
-      </div>
-      <div class="input-group">
-        <label>Startbedrag (€)</label>
-        <input type="number" id="start-amount" placeholder="0" oninput="updateSimulation()">
-      </div>
-      <div class="input-group">
-        <label>Looptijd (jaren)</label>
-        <select id="duration" onchange="updateSimulation()"></select>
-      </div>
-      <div class="input-group">
-        <label>Rendement (%)</label>
-        <input type="number" id="return-rate" step="0.1" value="7" oninput="updateSimulation()">
-      </div>
-      <div class="result">
-        <span id="total-result">Resultaat: € 0,00</span>
-        <span id="profit" class="profit">Winst: € 0,00</span>
-      </div>
-      <div id="grafiek-container">
-        <canvas id="investment-graph"></canvas>
-      </div>
-    </div>
-  </div>
-  <div class="error-message" id="error-message" style="display: none;">
-    Er is een probleem met het laden van de app. Controleer of 'index.js' en 'logo.jpg' correct zijn geüpload.
-  </div>
-`;
+// styles.js
+function applyStyles() {
+  const styleSheet = document.createElement("style");
+  document.head.appendChild(styleSheet);
+  const styles = `
+    #vrolijke-vrekken-tool * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-// Plak hier de rest van je JavaScript uit je originele HTML (ongeschonden)
-let incomeCategories = ["Loon", "Maaltijdcheques", "Kindergeld", "Vakantiegeld (Totaal gedeeld door 12)", "Eindejaarspremie (Totaal gedeeld door 12)", "Alimentatie", "Huurinkomsten"];
-let expenseCategories = ["Huur/Hypotheek", "Boodschappen", "Elektriciteit", "Water", "Verwarming", "Telecom", "Vervoer", "Leningen", "Streaming", "Kleren", "Horeca", "Hobby's", "Huisdieren", "Belastingen", "Verzekeringen"];
-let chart;
-const tutorialSteps = [ /* jouw volledige tutorialSteps-array uit de originele code */ ];
-let currentStep = 0;
-let isTutorialActive = false;
+    #vrolijke-vrekken-tool {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f0f4f8, #e0e7ff);
+      color: #2d3748;
+      line-height: 1.6;
+      padding: 20px;
+      position: relative;
+    }
 
-// Alle functies (startTutorial, updateBudget, enz.) uit je originele code hier toevoegen
-function startTutorial() { /* ... */ }
-function showTutorialStep() { /* ... */ }
-function nextTutorialStep() { /* ... */ }
-function closeTutorial() { /* ... */ }
-function formatAmount(amount) { /* ... */ }
-function updateBudget() { /* ... */ }
-function updateSimulation() { /* ... */ }
-function addIncomeCategory() { /* ... */ }
-function addExpenseCategory() { /* ... */ }
-function updateIncomeInputs() { /* ... */ }
-function updateExpenseInputs() { /* ... */ }
+    #vrolijke-vrekken-tool header {
+      text-align: center;
+      padding: 20px;
+      background: transparent;
+      margin-bottom: 20px;
+    }
 
-function initializeApp() {
-  const wrapper = document.getElementById("appwrapper-vrolijke-vrekken");
-  if (!wrapper) return;
+    #vrolijke-vrekken-tool header img {
+      max-width: 250px;
+      height: auto;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-radius: 15px;
+    }
 
-  wrapper.classList.add("vrolijke-vrekken-app");
-  wrapper.innerHTML = appHTML;
+    #vrolijke-vrekken-tool .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
 
-  updateIncomeInputs();
-  updateExpenseInputs();
-  updateBudget();
+    #vrolijke-vrekken-tool .card {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
 
-  const durationSelect = document.getElementById("duration");
-  for (let i = 1; i <= 50; i++) {
-    const option = document.createElement("option");
-    option.value = i;
-    option.text = `${i} jaar`;
-    if (i === 20) option.selected = true;
-    durationSelect.appendChild(option);
-  }
+    #vrolijke-vrekken-tool .card h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #1e3a8a;
+    }
 
-  if (localStorage.getItem("tutorialCompleted") !== "true") {
-    startTutorial();
-  } else {
-    document.getElementById("tutorial-icon").style.display = "block";
-  }
+    #vrolijke-vrekken-tool .input-group {
+      margin-bottom: 15px;
+      position: relative;
+    }
 
-  document.getElementById("tutorial-icon").addEventListener("click", startTutorial);
+    #vrolijke-vrekken-tool .input-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #4a5568;
+    }
 
-  if (typeof Chart === "undefined") {
-    console.error("Chart.js kon niet worden geladen.");
-    document.getElementById("error-message").style.display = "block";
-  }
+    #vrolijke-vrekken-tool .input-group input,
+    #vrolijke-vrekken-tool .input-group select {
+      width: 100%;
+      padding: 12px;
+      padding-left: 30px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+
+    #vrolijke-vrekken-tool .input-group input:focus,
+    #vrolijke-vrekken-tool .input-group select:focus {
+      border-color: #3b82f6;
+      outline: none;
+    }
+
+    #vrolijke-vrekken-tool .input-group input[readonly] {
+      background: #f7fafc;
+      color: #718096;
+    }
+
+    #vrolijke-vrekken-tool .input-group.income::before {
+      content: '+';
+      position: absolute;
+      left: 10px;
+      top: 38px;
+      color: #10b981;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    #vrolijke-vrekken-tool .input-group.expense::before {
+      content: '−';
+      position: absolute;
+      left: 10px;
+      top: 38px;
+      color: #ef4444;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    #vrolijke-vrekken-tool button {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+
+    #vrolijke-vrekken-tool button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    #vrolijke-vrekken-tool button.small-btn {
+      padding: 10px;
+      font-size: 0.9rem;
+      width: auto;
+      display: inline-block;
+      margin-top: 10px;
+    }
+
+    #vrolijke-vrekken-tool .total-amount {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #2d3748;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    #vrolijke-vrekken-tool #grafiek-container {
+      width: 100%;
+      height: 300px;
+      margin-top: 20px;
+      position: relative;
+    }
+
+    #vrolijke-vrekken-tool #investment-graph {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    #vrolijke-vrekken-tool .result {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #2d3748;
+      margin-top: 15px;
+    }
+
+    #vrolijke-vrekken-tool .result .profit {
+      color: #10b981;
+    }
+
+    #vrolijke-vrekken-tool .error-message {
+      color: #ef4444;
+      font-size: 1rem;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    #vrolijke-vrekken-tool .tutorial-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      display: none;
+    }
+
+    #vrolijke-vrekken-tool .tutorial-popup {
+      position: absolute;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      max-width: 300px;
+      z-index: 1001;
+      display: none;
+    }
+
+    #vrolijke-vrekken-tool .tutorial-popup.extra-padding {
+      padding-top: 30px;
+    }
+
+    #vrolijke-vrekken-tool .tutorial-popup p {
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+
+    #vrolijke-vrekken-tool .tutorial-popup .close-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: #ef4444;
+    }
+
+    #vrolijke-vrekken-tool .tutorial-popup .next-btn {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    #vrolijke-vrekken-tool .tutorial-popup.below::before {
+      content: "";
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-bottom: 10px solid white;
+    }
+
+    #vrolijke-vrekken-tool .tutorial-popup.above::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+     ICAg
+
+border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 10px solid white;
+    }
+
+    #vrolijke-vrekken-tool .tutorial-popup.no-line.below::before,
+    #vrolijke-vrekken-tool .tutorial-popup.no-line.above::after {
+      border-color: white;
+    }
+
+    #vrolijke-vrekken-tool .tutorial-icon {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 1002;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: #2563eb;
+      display: none;
+    }
+
+    @media (max-width: 480px) {
+      #vrolijke-vrekken-tool header img {
+        max-width: 150px;
+      }
+      #vrolijke-vrekken-tool .card h2 {
+        font-size: 1.3rem;
+      }
+      #vrolijke-vrekken-tool .input-group input,
+      #vrolijke-vrekken-tool .input-group select {
+        font-size: 0.9rem;
+      }
+      #vrolijke-vrekken-tool button {
+        font-size: 0.9rem;
+      }
+      #vrolijke-vrekken-tool button.small-btn {
+        font-size: 0.8rem;
+        padding: 8px;
+      }
+      #vrolijke-vrekken-tool .total-amount {
+        font-size: 0.9rem;
+      }
+      #vrolijke-vrekken-tool .input-group.income::before,
+      #vrolijke-vrekken-tool .input-group.expense::before {
+        top: 35px;
+      }
+      #vrolijke-vrekken-tool #grafiek-container {
+        height: 250px;
+      }
+    }
+  `;
+  styleSheet.textContent = styles;
 }
 
-initializeApp();
-
-export { initializeApp };
+document.addEventListener("DOMContentLoaded", applyStyles);
