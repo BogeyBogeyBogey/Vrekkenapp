@@ -13,11 +13,9 @@ body {
   position: relative;
 }
 
-/* Zorg dat de tool-container de referentie is voor positioning */
+/* Zorg dat de tool-container de referentie is voor positioning, zonder centrering */
 #vrolijke-vrekken-tool {
   position: relative;
-  max-width: 600px;
-  margin: 0 auto;
 }
 
 header {
@@ -34,7 +32,7 @@ header img {
 }
 .container {
   max-width: 600px;
-  margin: 0 auto;
+  margin: 0 auto; /* Centrering terug naar container */
 }
 .card {
   background: white;
