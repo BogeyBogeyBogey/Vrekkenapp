@@ -176,7 +176,6 @@
       z-index: 1001;
       display: none;
     }
-    /* Extra witruimte zodat de tekst niet botst met de sluitknop */
     .tutorial-popup.extra-padding {
       padding-top: 30px;
     }
@@ -201,7 +200,6 @@
       cursor: pointer;
       font-size: 0.9rem;
     }
-    /* Pijlen: als de pop-up onder het element komt, komt de pijl bovenaan de popup (wijst omhoog) */
     .tutorial-popup.below::before {
       content: "";
       position: absolute;
@@ -212,7 +210,6 @@
       border-right: 10px solid transparent;
       border-bottom: 10px solid white;
     }
-    /* Als de pop-up boven het element komt, verschijnt de pijl onderaan (wijst omlaag) */
     .tutorial-popup.above::after {
       content: "";
       position: absolute;
@@ -223,7 +220,6 @@
       border-right: 10px solid transparent;
       border-top: 10px solid white;
     }
-    /* Verwijder eventuele ongewenste lijnen in de pijl */
     .tutorial-popup.no-line.below::before,
     .tutorial-popup.no-line.above::after {
       border-color: white;
@@ -237,6 +233,86 @@
       font-size: 1.5rem;
       color: #2563eb;
       display: none;
+    }
+
+    /* Quick Save knop */
+    .quick-save-btn {
+      background: linear-gradient(135deg, #facc15, #f97316); /* Geel-oranje gradient voor vrolijkheid */
+      color: #1e3a8a; /* Donkerblauw voor contrast */
+      border: 2px solid #facc15; /* Gele rand */
+      padding: 14px 24px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      box-shadow: 0 6px 16px rgba(249, 115, 22, 0.3);
+      transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
+      animation: pulse 2s infinite; /* Subtiele puls animatie */
+      display: block;
+      margin: 20px auto; /* Centreert de knop */
+      width: fit-content;
+    }
+    .quick-save-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(249, 115, 22, 0.5);
+      background: linear-gradient(135deg, #fde047, #fb923c);
+    }
+
+    /* Puls animatie */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* Quick Save pop-up */
+    .quick-save-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      display: none;
+    }
+    .quick-save-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      max-width: 350px;
+      width: 90%;
+      z-index: 1001;
+      border: 3px solid #facc15; /* Gele rand voor speelsheid */
+      display: none;
+    }
+    .quick-save-popup h3 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #1e3a8a;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .quick-save-popup .input-group {
+      margin-bottom: 20px;
+    }
+    .quick-save-popup .result {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #10b981;
+      text-align: center;
+    }
+    .quick-save-popup .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      font-size: 1.4rem;
+      color: #ef4444;
     }
 
     @media (max-width: 480px) {
@@ -266,6 +342,16 @@
       }
       #grafiek-container {
         height: 250px;
+      }
+      .quick-save-btn {
+        font-size: 1rem;
+        padding: 12px 20px;
+      }
+      .quick-save-popup {
+        padding: 20px;
+      }
+      .quick-save-popup h3 {
+        font-size: 1.2rem;
       }
     }
   </style>
@@ -340,6 +426,21 @@
         <canvas id="investment-graph"></canvas>
       </div>
     </div>
+
+    <!-- Quick Save knop -->
+    <button class="quick-save-btn" onclick="openQuickSavePopup()">Quick Save!</button>
+  </div>
+
+  <!-- Quick Save pop-up -->
+  <div class="quick-save-overlay" id="quick-save-overlay" onclick="closeQuickSavePopup()"></div>
+  <div class="quick-save-popup" id="quick-save-popup">
+    <span class="close-btn" onclick="closeQuickSavePopup()">✖</span>
+    <h3>Quick Save!</h3>
+    <div class="input-group">
+      <label>Bedrag dat je nu uitspaart (€)</label>
+      <input type="number" id="quick-save-amount" placeholder="0" oninput="calculateQuickSave()">
+    </div>
+    <div class="result" id="quick-save-result">Na 20 jaar: € 0,00</div>
   </div>
 
   <div class="error-message" id="error-message" style="display: none;">
@@ -491,7 +592,6 @@
         nextBtn.textContent = step.buttonText || "Volgende";
         text.innerHTML = step.text;
 
-        // Bepaal targetElement
         let targetElement;
         if (step.targetField === "add-income-btn") {
           targetElement = document.getElementById("add-income-btn");
@@ -622,7 +722,6 @@
       localStorage.setItem("tutorialCompleted", "true");
       isTutorialActive = false;
 
-      // Zet startbedrag en maandelijks bedrag op 0
       document.getElementById("start-amount").value = 0;
       document.getElementById("monthly-amount").value = 0;
 
@@ -650,7 +749,6 @@
       });
       document.getElementById("total-expenses").textContent = `Totaal uitgaven: ${formatAmount(totalExpenses)}`;
 
-      // Na de tutorial geldt: maandbedrag = inkomsten - uitgaven
       const monthlyAmount = isTutorialActive ? 100 : totalIncome - totalExpenses;
       document.getElementById("monthly-amount").value = monthlyAmount.toFixed(2);
       document.getElementById("balance-amount").textContent = `Eindsaldo: ${formatAmount(monthlyAmount)}`;
@@ -769,6 +867,27 @@
       document.getElementById("profit").textContent = `Winst: ${formatAmount(profit)}`;
     }
 
+    /* Quick Save functionaliteit */
+    function openQuickSavePopup() {
+      document.getElementById("quick-save-overlay").style.display = "block";
+      document.getElementById("quick-save-popup").style.display = "block";
+      document.getElementById("quick-save-amount").value = ""; // Reset input
+      calculateQuickSave(); // Reset resultaat
+    }
+
+    function closeQuickSavePopup() {
+      document.getElementById("quick-save-overlay").style.display = "none";
+      document.getElementById("quick-save-popup").style.display = "none";
+    }
+
+    function calculateQuickSave() {
+      const amount = parseFloat(document.getElementById("quick-save-amount").value) || 0;
+      const years = 20;
+      const annualRate = 0.07; // 7% rendement
+      const futureValue = amount * Math.pow(1 + annualRate, years); // Samengestelde interest
+      document.getElementById("quick-save-result").textContent = `Na 20 jaar: ${formatAmount(futureValue)}`;
+    }
+
     /* Dynamische categorieën toevoegen */
     function addIncomeCategory() {
       const incomeValues = {};
@@ -851,7 +970,6 @@
       updateExpenseInputs();
       updateBudget(); // Initieel saldo en grafiek
 
-      // Vul de dropdown voor looptijd met opties van 1 tot 50 jaar, standaard op 20 jaar
       const durationSelect = document.getElementById("duration");
       for (let i = 1; i <= 50; i++) {
         const option = document.createElement("option");
